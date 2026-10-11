@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poopathi Xerox - Online Orders</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+
+    header {
+      background: #123c69;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 25px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 18px #00000012;
+    }
+
+    h2 {
+      color: #123c69;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+
+    input[type="file"] {
+      background: #f8fafc;
+    }
+
+    .bill {
+      background: #eaf7ee;
+      padding: 18px;
+      border-radius: 10px;
+      margin-top: 22px;
+      text-align: center;
+    }
+
+    .bill h3 {
+      margin: 0;
+    }
+
+    #total {
+      font-size: 30px;
+      font-weight: bold;
+      color: #15803d;
+      margin: 10px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      background: #25D366;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1da851;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Poopathi Xerox</h1>
+  <p>Upload your PDF • Calculate your bill • Order on WhatsApp</p>
+</header>
+
+<div class="container">
+  <h2>Place Your Xerox Order</h2>
+
+  <form id="orderForm">
+
+    <label for="customer">Customer Name</label>
+    <input type="text" id="customer" required
+           placeholder="Enter your name">
+
+    <label for="phone">Customer Phone Number</label>
+    <input type="tel" id="phone" required
+           pattern="[0-9]{10}" maxlength="10"
+           placeholder="Enter 10-digit mobile number">
+
+    <label for="pdf">Upload PDF File</label>
+    <input type="file" id="pdf" accept=".pdf,application/pdf" required>
+
+    <label for="pages">Number of Pages</label>
+    <input type="number" id="pages" min="1" value="1" required>
+
+    <label for="copies">Number of Copies</label>
+    <input type="number" id="copies" min="1" value="1" required>
+
+    <label for="printType">Printing Type</label>
+    <select id="printType">
+      <option value="2">Black & White - ₹2 per page</option>
+      <option value="10">Colour - ₹10 per page</option>
+    </select>
+
+    <label for="sides">Printing Sides</label>
+    <select id="sides">
+      <option value="1">Single Side</option>
+      <option value="2">Double Side (same page rate)</option>
+    </select>
+
+    <label for="instructions">Additional Instructions</label>
+    <textarea id="instructions" rows="3"
+      placeholder="Example: Staple the papers"></textarea>
+
+    <div class="bill">
+      <h3>Estimated Total Bill</h3>
+      <div id="total">₹2.00</div>
+      <p id="calculation">1 page × 1 copy</p>
+    </div>
+
+    <button type="submit">
+      Place Order on WhatsApp
+    </button>
+
+    <p class="note">
+      Note: The total is an estimate based on the selected page
+      count, copies and printing type. Double-sided printing is
+      charged at the same per-page rate in this example.
+      Please adjust the prices to match your shop.
+    </p>
+
+  </form>
+</div>
+
+<footer>
+  © 2026 Poopathi Xerox | Thank you for choosing us!
+</footer>
+
+<script>
+  // Shop WhatsApp number, with India country code
+  const shopWhatsApp = "917708851581";
+
+  const pages = document.getElementById("pages");
+  const copies = document.getElementById("copies");
+  const printType = document.getElementById("printType");
+  const sides = document.getElementById("sides");
+  const totalDisplay = document.getElementById("total");
+  const calculation = document.getElementById("calculation");
+
+  function updateBill() {
+    const p = Math.max(1, Number(pages.value) || 1);
+    const c = Math.max(1, Number(copies.value) || 1);
+    const rate = Number(printType.value);
+
+    // Assumes pages means the number of printed page sides.
+    // Double-sided option uses the same total rate here.
+    const total = p * c * rate;
+
+    totalDisplay.textContent = "₹" + total.toFixed(2);
+    calculation.textContent =
+      p + " pages × " + c + " copies × ₹" + rate;
+  }
+
+  pages.addEventListener("input", updateBill);
+  copies.addEventListener("input", updateBill);
+  printType.addEventListener("change", updateBill);
+  sides.addEventListener("change", updateBill);
+
+  document.getElementById("orderForm")
+    .addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const customer =
+        document.getElementById("customer").value.trim();
+      const phone =
+        document.getElementById("phone").value.trim();
+      const pdf =
+        document.getElementById("pdf").files[0];
+      const instructions =
+        document.getElementById("instructions").value.trim();
+
+      if (!/^[0-9]{10}$/.test(phone)) {
+        alert("Please enter a valid 10-digit phone number.");
+        return;
+      }
+
+      if (!pdf || pdf.type !== "application/pdf") {
+        alert("Please select a PDF file.");
+        return;
+      }
+
+      const p = Number(pages.value);
+      const c = Number(copies.value);
+      const rate = Number(printType.value);
+      const total = p * c * rate;
+
+      if (p < 1 || c < 1 ||
+          !Number.isInteger(p) || !Number.isInteger(c)) {
+        alert("Pages and copies must be positive whole numbers.");
+        return;
+      }
+
+      const printName = rate === 2
+        ? "Black & White"
+        : "Colour";
+
+      const sideName = sides.value === "1"
+        ? "Single Side"
+        : "Double Side";
+
+      const message =
+`🖨️ *NEW ORDER - POOPATHI XEROX*
+
+👤 Customer: ${customer}
+📱 Customer Phone: ${phone}
+📄 PDF File: ${pdf.name}
+📃 Pages: ${p}
+📚 Copies: ${c}
+🖨️ Printing: ${printName}
+📑 Sides: ${sideName}
+💰 Rate per page: ₹${rate}
+💵 TOTAL BILL: ₹${total.toFixed(2)}
+
+📝 Instructions: ${instructions || "None"}
+
+Please confirm my order.`;
+
+      const whatsappURL =
+        "https://wa.me/" + shopWhatsApp +
+        "?text=" + encodeURIComponent(message);
+
+      window.open(whatsappURL, "_blank");
+    });
+
+  updateBill();
+</script>
+
+</body>
+</html>
